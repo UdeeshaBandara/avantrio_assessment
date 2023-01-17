@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Avantrio Assessment</string>
+    <string name="sign_up"><u> Sign up</u></string>
+    <string name="new_to_us">New to us?</string>
+    <string name="login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+</resources>
