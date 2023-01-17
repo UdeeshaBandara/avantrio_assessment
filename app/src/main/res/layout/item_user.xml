@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/user_item_background"
+    android:layout_height="50dp"
     android:layout_marginVertical="5dp"
-    android:layout_height="50dp">
-
+    android:background="@drawable/user_item_background">
 
 
     <ImageView
@@ -12,9 +11,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="45dp"
+        android:layout_marginStart="25dp"
         android:layout_marginEnd="30dp"
         android:elevation="12dp"
         android:src="@drawable/search_icon" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="60dp"
+        android:fontFamily="@font/poppins_regular"
+        android:text="Jaison Burnatte"
+        android:textColor="@color/black"
+        android:textSize="14sp" />
+
+
+    <ImageView
+
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="50dp"
+        android:elevation="12dp"
+        android:src="@drawable/heart_icon" />
+
+    <ImageView
+        android:id="@+id/img_more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="30dp"
+        android:elevation="12dp"
+        android:src="@drawable/more_icon" />
 
 </RelativeLayout>
