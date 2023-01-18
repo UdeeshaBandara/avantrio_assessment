@@ -1,5 +1,6 @@
 package com.avantrio.assessment.service
 
+import com.avantrio.assessment.model.Login
 import com.avantrio.assessment.model.User
 import com.avantrio.assessment.model.UserLog
 import com.google.gson.JsonObject
@@ -14,9 +15,9 @@ interface ApiInterface {
     @POST("user/login")
     suspend fun login(
         @Body postDetails: HashMap<String, String>
-    ): Call<JsonObject>
+    ): Response<Login>
 
-    @GET("user")
+    @GET("users")
     suspend fun getUsers(
         @Header("Authorization") token: String,
     ): Response<User>
@@ -32,7 +33,7 @@ interface ApiInterface {
 
         private val BASE_URL = "http://apps.avantrio.xyz:8010/api/"
 
-        fun create(): ApiInterface {
+        operator fun invoke(): ApiInterface {
 
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())
