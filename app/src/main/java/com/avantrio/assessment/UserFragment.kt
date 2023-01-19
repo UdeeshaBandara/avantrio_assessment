@@ -35,7 +35,7 @@ class UserFragment : Fragment(), RecyclerViewClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val api = ApiInterface()
-        val repository = UserRepository(api)
+        val repository = UserRepository(api, requireContext())
 
         factory = UserViewModelFactory(repository)
         viewModel = ViewModelProviders.of(this, factory)[UserViewModel::class.java]

@@ -18,7 +18,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         val api = ApiInterface()
-        val repository = UserRepository(api)
+        val repository = UserRepository(api, this)
 
         factory = UserViewModelFactory(repository)
         viewModel = ViewModelProviders.of(this, factory)[UserViewModel::class.java]

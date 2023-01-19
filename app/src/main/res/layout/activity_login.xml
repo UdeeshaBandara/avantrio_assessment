@@ -65,7 +65,7 @@
                         android:layout_marginStart="30dp"
                         android:fontFamily="@font/poppins_medium"
                         android:hint="Email"
-                        android:text="@={viewModel.email}"
+
                         android:inputType="textEmailAddress"
                         android:textColor="@color/white"
                         android:textSize="14sp" />
@@ -93,7 +93,7 @@
                         android:layout_marginStart="30dp"
                         android:fontFamily="@font/poppins_medium"
                         android:hint="Password"
-                        android:text="@={viewModel.password}"
+
                         android:inputType="textPassword"
                         android:textColor="@color/white"
                         android:textSize="14sp" />

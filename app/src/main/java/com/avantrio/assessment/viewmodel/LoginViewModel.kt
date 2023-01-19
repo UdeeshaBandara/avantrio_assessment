@@ -32,10 +32,10 @@ class LoginViewModel(
         if (isValid()) {
             CoroutineScope(Dispatchers.Main).launch {
                 val data = CoroutineScope(Dispatchers.IO).async rt@{
-                    return@rt _email?.let {
+                    return@rt _email?.let { email ->
                         _password?.let { pass ->
                             repository.userLogin(
-                                it,
+                                email,
                                 pass
                             )
                         }
