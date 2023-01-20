@@ -20,12 +20,12 @@ interface ApiInterface {
     @GET("users")
     suspend fun getUsers(
         @Header("Authorization") token: String,
-    ): Response<User>
+    ): Response<List<User>>
 
     @GET("user/{id}/logs")
     suspend fun getUserLog(
         @Header("Authorization") token: String,
-        id: String
+        @Path("id") id: String
     ):  Response<UserLog>
 
 

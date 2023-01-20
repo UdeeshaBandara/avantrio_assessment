@@ -5,22 +5,22 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.avantrio.assessment.adapter.RecyclerViewClickListener
-import com.avantrio.assessment.adapter.UserAdapter
-import com.avantrio.assessment.model.User
+import com.avantrio.assessment.adapter.UserLogAdapter
 import com.avantrio.assessment.repositories.UserRepository
 import com.avantrio.assessment.service.ApiInterface
-import com.avantrio.assessment.viewmodel.UserViewModel
-import com.avantrio.assessment.viewmodel.UserViewModelFactory
+import com.avantrio.assessment.service.CoreApp
+import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
+import kotlinx.android.synthetic.main.fragment_user_details.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
-class UserDetailsFragment : Fragment(), RecyclerViewClickListener {
+class UserDetailsFragment : Fragment() {
 
-
-    private lateinit var factory: UserViewModelFactory
-    private lateinit var viewModel: UserViewModel
+    private val api = ApiInterface()
+    private lateinit var repository: UserRepository
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -34,25 +34,50 @@ class UserDetailsFragment : Fragment(), RecyclerViewClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val api = ApiInterface()
-        val repository = UserRepository(api, requireContext())
+        repository = UserRepository(api, requireContext())
 
-        factory = UserViewModelFactory(repository)
-        viewModel = ViewModelProviders.of(this, factory)[UserViewModel::class.java]
 
-        viewModel.getUsers()
+        getUserLog()
 
-        viewModel.users.observe(viewLifecycleOwner) { users ->
-            view.findViewById<RecyclerView>(R.id.user_recycler).also {
-                it.layoutManager = LinearLayoutManager(requireContext())
-                it.setHasFixedSize(true)
-                it.adapter = UserAdapter(users, this)
+
+        back.setOnClickListener { requireActivity().onBackPressed() }
+
+    }
+
+    override fun onHiddenChanged(hidden: Boolean) {
+        super.onHiddenChanged(hidden)
+        if (!hidden)
+            getUserLog()
+    }
+
+    private fun getUserLog() {
+
+        user_name.text = tinyDB.getString("selectedUserName")
+        CoroutineScope(Dispatchers.Main).launch {
+            val data = CoroutineScope(Dispatchers.IO).async rt@{
+                return@rt repository.getUserLog()
+            }.await()
+            CoroutineScope(Dispatchers.IO).async {
+
+
+                CoreApp.userDao?.insertAllUserLogs(data?.logs)
             }
+
+
+            data.let {
+//                _users.value = it
+                recycler_user_log.adapter = UserLogAdapter(it!!.logs, requireActivity())
+                recycler_user_log.layoutManager = LinearLayoutManager(
+                    activity?.applicationContext,
+                    LinearLayoutManager.VERTICAL,
+                    false
+                )
+            }
+
+
         }
+
     }
 
-    override fun onRecyclerViewItemClick(view: View, user: User) {
-        TODO("Not yet implemented")
-    }
 
 }

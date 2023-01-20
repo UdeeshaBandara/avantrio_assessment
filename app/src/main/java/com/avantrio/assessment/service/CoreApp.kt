@@ -16,14 +16,14 @@ class CoreApp : Application() {
         appDatabase = UserDatabase.getInstance(this@CoreApp)
         userDao = appDatabase?.userDao()
 
-
+        tinyDB = TinyDB(this@CoreApp)
     }
 
     companion object {
         var instance: CoreApp? = null
             private set
 
-
+        lateinit var tinyDB: TinyDB
         //Database
         var appDatabase: UserDatabase? = null
         var userDao: UserDao? = null

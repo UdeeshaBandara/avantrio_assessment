@@ -8,6 +8,13 @@
     tools:context=".MainActivity">
 
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="85dp" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="90dp"
@@ -37,9 +44,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Home"
-                android:layout_marginTop="5dp"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
@@ -65,9 +72,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Users"
-                android:layout_marginTop="5dp"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
@@ -93,9 +100,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:fontFamily="@font/poppins_medium"
                 android:text="Settings"
-                android:layout_marginTop="5dp"
                 android:textColor="@color/black"
                 android:textSize="12sp" />
 
@@ -104,13 +111,6 @@
 
     </LinearLayout>
 
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragmentContainerView"
-        android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav" />
 
 
 </RelativeLayout>

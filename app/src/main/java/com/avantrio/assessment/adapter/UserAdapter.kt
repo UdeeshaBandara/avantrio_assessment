@@ -1,32 +1,60 @@
 package com.avantrio.assessment.adapter
 
+import android.app.Activity
+import android.app.PendingIntent.getActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
+import android.widget.ImageView
+import android.widget.RelativeLayout
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.avantrio.assessment.MainActivity
 import com.avantrio.assessment.R
-import com.avantrio.assessment.databinding.ItemUserBinding
 import com.avantrio.assessment.model.User
+import com.avantrio.assessment.service.CoreApp
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
 class UserAdapter(
-    private val users: User,
-    private val listener: RecyclerViewClickListener
+    private val users: List<User>,
+    activity: Activity,
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
+
+
+    var activity = activity
+
     override fun getItemCount() = users.size
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        UserViewHolder(
-            DataBindingUtil.inflate(
-                LayoutInflater.from(parent.context),
-                R.layout.item_user,
-                parent,
-                false
-            )
-        )
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): UserViewHolder {
+
+        val view: View = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_user, parent, false)
+
+        return UserViewHolder(view)
+    }
+
 
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
-        holder.itemUserBinding.user = users[position]
+
+
+        holder.name.text = users[position].name
+
+        holder.imgFav.setOnClickListener {
+            CoroutineScope(Dispatchers.IO).async {
+                CoreApp.userDao?.changeFavStatus(users[position].id, !users[position].isFav)
+
+            }
+        }
+        holder.rootView.setOnClickListener {
+
+            (activity as MainActivity).changeFragment(users[position].id.toString(),users[position].name)
+        }
+
 //        holder.itemUserBinding.buttonBook.setOnClickListener {
 //            listener.onRecyclerViewItemClick(holder.itemUserBinding.buttonBook, movies[position])
 //        }
@@ -35,12 +63,21 @@ class UserAdapter(
 //        }
     }
 
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
-    inner class UserViewHolder(
-        val itemUserBinding: ItemUserBinding
-    ) : RecyclerView.ViewHolder(itemUserBinding.root)
+
+        var rootView: RelativeLayout = itemView.findViewById(R.id.root_view)
+        var name: TextView = itemView.findViewById(R.id.name)
+        var imgFav: ImageView = itemView.findViewById(R.id.img_fav)
+        var imgMore: ImageView = itemView.findViewById(R.id.img_more)
+
+
+    }
+
+
 }
 
 interface RecyclerViewClickListener {
     fun onRecyclerViewItemClick(view: View, user: User)
+    fun onFavClick(user: User)
 }

@@ -15,6 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AvantrioAssessment"
         android:usesCleartextTraffic="true"
+        android:name=".service.CoreApp"
         tools:targetApi="31">
         <activity
             android:name=".LoginActivity"
