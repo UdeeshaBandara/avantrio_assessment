@@ -48,7 +48,9 @@ class UserFragment : Fragment() {
         repository = UserRepository()
         getUsers()
 
+        //updating location details
         img_location.setOnClickListener {
+
             PermissionHandler(requireActivity()).getLocation(object :
                 PermissionHandler.LocationPermissionCallback {
                 override fun onSuccess(location: Location, addressText: String) {
@@ -67,6 +69,7 @@ class UserFragment : Fragment() {
 
             })
         }
+        //filtering fav user list
         img_fav_filter.setOnClickListener {
             if (img_fav_filter.tag.equals("notFav")) {
                 img_fav_filter.tag = "fav"
@@ -104,9 +107,9 @@ class UserFragment : Fragment() {
 
                 //Cross check with local db after getting data from API
                 lifecycleScope.launch(Dispatchers.IO) {
-                    val loginResponse = response.body() as List<User>
+                    val userResponse = response.body() as List<User>
                     val existingUserList: List<User> = CoreApp.userDao?.selectAllExistingUsers()!!
-                    loginResponse.forEach { value ->
+                    userResponse.forEach { value ->
                         if (!existingUserList.any { it.name == value.name }) {
                             CoreApp.userDao?.insert(value)
                             existingUserList.toMutableList().add(value)

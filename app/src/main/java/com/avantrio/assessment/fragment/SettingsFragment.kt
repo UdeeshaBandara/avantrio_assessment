@@ -1,5 +1,6 @@
 package com.avantrio.assessment.fragment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.location.Address
 import android.location.Location
@@ -30,12 +31,17 @@ class SettingsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+
         btn_log_out.setOnClickListener {
-            tinyDB.putBoolean("isLoggedIn", false)
-            startActivity(Intent(requireActivity(), LoginActivity::class.java))
-            requireActivity().finishAffinity()
+          showConfirmationAndLogout()
+
         }
+
+
         btn_update_location.setOnClickListener {
+
+            //updating location from settings page
             PermissionHandler(requireActivity()).getLocation(object :
                 PermissionHandler.LocationPermissionCallback {
                 override fun onSuccess(location: Location, addressText: String) {
@@ -54,6 +60,24 @@ class SettingsFragment : Fragment() {
         txt_email.text = tinyDB.getString("userEmail")
         txt_user_address.text = tinyDB.getString("userAddress")
 
+    }
+
+    private fun showConfirmationAndLogout() {
+        val builder = AlertDialog.Builder(requireActivity())
+        builder.setMessage("Are you sure you want to log out?")
+            .setCancelable(false)
+            .setPositiveButton("Yes") { _, _ ->
+                tinyDB.putBoolean("isLoggedIn", false)
+                startActivity(Intent(requireActivity(), LoginActivity::class.java))
+                requireActivity().finishAffinity()
+
+            }
+            .setNegativeButton("No") { dialog, id ->
+
+                dialog.dismiss()
+            }
+        val alert = builder.create()
+        alert.show()
     }
 
 

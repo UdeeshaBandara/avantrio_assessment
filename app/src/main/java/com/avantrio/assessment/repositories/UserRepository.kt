@@ -1,14 +1,12 @@
 package com.avantrio.assessment.repositories
 
-import android.content.Context
+
 import android.util.Log
 import com.avantrio.assessment.model.Login
-import com.avantrio.assessment.model.User
 import com.avantrio.assessment.model.UserLog
 import com.avantrio.assessment.service.ApiInterface
 import com.avantrio.assessment.service.CoreApp
 import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
-import com.avantrio.assessment.service.TinyDB
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -64,6 +62,7 @@ class UserRepository(
             override fun onSuccess(response: Response<Any>) {
 
                 if (response.code() == 200) {
+                    //adding token and user details to shared preferences
                     val loginResponse = response.body() as Login
                     tinyDB.putString("accessToken", "Bearer " + loginResponse.token)
                     tinyDB.putBoolean("isLoggedIn", true)
@@ -83,17 +82,6 @@ class UserRepository(
 
     }
 
-//    fun checkIfUserLogAvailableAndCallUserLog(): Boolean {
-//        GlobalScope.launch(Dispatchers.Main) {
-//            val result = withContext(Dispatchers.Default) {
-//                CoreApp.userDao?.checkUserLogCount() != 0
-//            }
-//            return@launch
-//        }
-//
-//
-//    }
-
     fun getUserLog(callbackTo: NetworkCallback) {
         fetchData(ApiInterface.create().getUserLog(
             accessToken,
@@ -101,6 +89,7 @@ class UserRepository(
         ) as Call<Any>, callback = object : NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
                 val userLog = response.body() as UserLog
+//                Retrieve user log and save into table
                 CoroutineScope(Dispatchers.IO).async {
                     userLog.logs.forEach {
                         it.userName = tinyDB.getString("selectedUserName")!!
@@ -119,12 +108,15 @@ class UserRepository(
 
     }
 
+    //clearing calculated distance details from database
     fun resetCalculatedDistance() {
+
         CoroutineScope(Dispatchers.IO).async {
             CoreApp.userDao?.resetCalculatedDistance()
         }
     }
 
+    //common network call
     private fun fetchData(apiInterface: Call<Any>, callback: NetworkCallback) {
 
 

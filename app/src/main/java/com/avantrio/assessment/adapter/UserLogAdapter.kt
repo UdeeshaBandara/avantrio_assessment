@@ -83,6 +83,7 @@ class UserLogAdapter(
                 holder.txtAlert.text = "On" else holder.txtAlert.text = "off"
 
 
+            //hide calculate button and assigning calculated distance values to text field
             if (users[position].isCalculated) {
                 holder.txtCalculatedDistance.visibility = View.VISIBLE
                 holder.btnCalculate.visibility = View.GONE
@@ -99,6 +100,7 @@ class UserLogAdapter(
                 holder.txtLocation.text =
                     retrieveAddressUsingLatLong(users[position].latitude, users[position].longitude)
 
+                //retrieving address based on the latitude and longitude
                 holder.txtLocation.text = retrieveAddressUsingLatLong(
                     users[position].latitude,
                     users[position].longitude
@@ -126,6 +128,7 @@ class UserLogAdapter(
                     tinyDB.putBoolean("isLocationSaved", false)
                 else {
 
+                    //calculating displacement
                     val displacement = FloatArray(1)
                     Location.distanceBetween(
                         users[position].latitude,
@@ -137,6 +140,7 @@ class UserLogAdapter(
 
                     if (displacement.isNotEmpty())
                         tinyDB.getString("selectedUserName")?.let { selectedUserName ->
+                            //update room db with calculated distance
                             CoroutineScope(Dispatchers.IO).async {
                                 CoreApp.userDao?.updateDistanceById(
                                     users[position].id,

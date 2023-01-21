@@ -50,7 +50,7 @@ class UserDetailsFragment : Fragment() {
         }
 
         img_location.setOnClickListener {
-
+            //updating location details
             PermissionHandler(requireActivity()).getLocation(object :
                 PermissionHandler.LocationPermissionCallback {
                 override fun onSuccess(location: Location, addressText: String) {

@@ -19,7 +19,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity() {
 
     lateinit var mainFragmentManager: FragmentManager
-
     private val userFragment: UserFragment = UserFragment()
     private val settingsFragment: SettingsFragment = SettingsFragment()
     private val userDetailsFragment: UserDetailsFragment = UserDetailsFragment()
@@ -85,17 +84,13 @@ class MainActivity : AppCompatActivity() {
             val heightDiff = displayMetrics.heightPixels - (r.bottom - r.top)
             if (heightDiff > 100) {
 
-
                 bottom_navigation.visibility =
                     View.INVISIBLE
 
-
             } else {
-
 
                 bottom_navigation.visibility =
                     View.VISIBLE
-
 
             }
 

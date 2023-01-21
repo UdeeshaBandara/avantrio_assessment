@@ -15,6 +15,7 @@ import com.avantrio.assessment.R
 import com.avantrio.assessment.activity.MainActivity
 import com.avantrio.assessment.fragment.UserDetailsFragment
 import com.avantrio.assessment.model.User
+import com.avantrio.assessment.repositories.UserRepository
 import com.avantrio.assessment.service.CoreApp
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.coroutines.CoroutineScope
@@ -30,9 +31,9 @@ class UserAdapter(
 
     private var isDescending = false
     private var usersOriginal = users
-    private var initialMonogram = true
 
     init {
+        //Assigning random colors for user monogram
         val rnd = Random()
         users.forEachIndexed { index, _ ->
             users[index].monogramColor =
@@ -119,9 +120,12 @@ class UserAdapter(
             }
 
         }
+        //Adding details and navigate to user log fragment
         holder.rootView.setOnClickListener {
             CoreApp.tinyDB.putString("selectedUserId", users[position].id.toString())
             CoreApp.tinyDB.putString("selectedUserName", users[position].name)
+
+
             (activity as MainActivity).changeFragment(
                 UserDetailsFragment().javaClass.name
             )
@@ -137,7 +141,6 @@ class UserAdapter(
         var txtMonogram: TextView = itemView.findViewById(R.id.txt_monogram)
         var monogramCard: CardView = itemView.findViewById(R.id.monogram_card)
         var imgFav: ImageView = itemView.findViewById(R.id.img_fav)
-        var imgMore: ImageView = itemView.findViewById(R.id.img_more)
 
 
     }

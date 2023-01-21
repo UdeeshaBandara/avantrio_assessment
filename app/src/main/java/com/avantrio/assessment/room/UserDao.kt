@@ -16,8 +16,8 @@ interface UserDao {
     @Query("SELECT * FROM UserItem")
     fun selectAllExistingUsers(): List<User>
 
-    @Query("SELECT * FROM UserLog WHERE userName = :userName")
-    fun selectUserLogById(userName: String): List<Log>
+    @Query("SELECT * FROM UserLog")
+    fun selectAllUserLog(): List<Log>
 
     @Query("UPDATE UserItem SET isFav = :isFav WHERE name = :name")
     fun changeFavStatus(name: String, isFav: Boolean): Int

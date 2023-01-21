@@ -23,9 +23,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-
-
-
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
         binding.loginHandler = LoginHandler(this, UserRepository())
@@ -69,10 +66,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(ctx, "Email or password not valid", Toast.LENGTH_LONG).show()
             }
 
-
         }
-
-
     }
 }
 
