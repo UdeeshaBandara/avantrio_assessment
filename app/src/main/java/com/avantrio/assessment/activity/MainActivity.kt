@@ -28,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         mainFragmentManager = supportFragmentManager
 
+        //Adding fragment to fragment manger when activity creating
         if (savedInstanceState == null)
             mainFragmentManager.beginTransaction().add(
                 R.id.fragment_container,
@@ -51,21 +52,8 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun showUserLogFragment(selectedUserId: String, selectedUserName: String) {
 
-        tinyDB.putString("selectedUserId", selectedUserId)
-        tinyDB.putString("selectedUserName", selectedUserName)
-        mainFragmentManager.beginTransaction()
-            .hide(mainFragmentManager.findFragmentByTag(currentFragmentTag)!!)
-            .show(mainFragmentManager.findFragmentByTag(userDetailsFragment.javaClass.name)!!)
-            .addToBackStack(userDetailsFragment.javaClass.name).commit()
-        currentFragmentTag = userDetailsFragment.javaClass.name
-
-    }
-
-    private fun changeFragment(newFragmentTag: String) {
-
-        if (mainFragmentManager.backStackEntryCount > 0) onBackPressed()
+    fun changeFragment(newFragmentTag: String) {
 
         mainFragmentManager.beginTransaction()
             .hide(mainFragmentManager.findFragmentByTag(currentFragmentTag)!!)
@@ -74,6 +62,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    //Redirect to login activity on session timeout
     fun redirectToLogin() {
         tinyDB.putBoolean("isLoggedIn", false)
         Toast.makeText(this, "Session timeout. Please log again", Toast.LENGTH_LONG).show()

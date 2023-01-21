@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Avantrio Assessment</string>
+    <string name="app_name">Avantrio</string>
     <string name="sign_up"><u> Sign up</u></string>
     <string name="new_to_us">New to us?</string>
     <string name="login">Login</string>

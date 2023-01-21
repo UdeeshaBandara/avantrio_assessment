@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.avantrio.assessment.model.Log
 import com.avantrio.assessment.model.User
 
-@Database(entities = [User::class, Log::class], exportSchema = false, version = 2)
+@Database(entities = [User::class, Log::class], exportSchema = false, version = 3)
 abstract class UserDatabase : RoomDatabase() {
 
 

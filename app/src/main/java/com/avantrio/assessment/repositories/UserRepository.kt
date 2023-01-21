@@ -9,9 +9,7 @@ import com.avantrio.assessment.service.ApiInterface
 import com.avantrio.assessment.service.CoreApp
 import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
 import com.avantrio.assessment.service.TinyDB
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,14 +32,13 @@ class UserRepository(
 
     fun getUsers(callbackTo: NetworkCallback) {
 
+
         fetchData(ApiInterface.create().getUsers(
             accessToken
         ) as Call<Any>, callback = object : NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
-                val loginResponse = response.body() as List<User>
-                CoroutineScope(Dispatchers.IO).async {
-                    CoreApp.userDao?.insertAll(loginResponse)
-                }
+
+
                 callbackTo.onSuccess(response)
             }
 
@@ -50,6 +47,7 @@ class UserRepository(
             }
 
         })
+
 
     }
 
@@ -85,6 +83,17 @@ class UserRepository(
 
     }
 
+//    fun checkIfUserLogAvailableAndCallUserLog(): Boolean {
+//        GlobalScope.launch(Dispatchers.Main) {
+//            val result = withContext(Dispatchers.Default) {
+//                CoreApp.userDao?.checkUserLogCount() != 0
+//            }
+//            return@launch
+//        }
+//
+//
+//    }
+
     fun getUserLog(callbackTo: NetworkCallback) {
         fetchData(ApiInterface.create().getUserLog(
             accessToken,
@@ -93,7 +102,11 @@ class UserRepository(
             override fun onSuccess(response: Response<Any>) {
                 val userLog = response.body() as UserLog
                 CoroutineScope(Dispatchers.IO).async {
-                    CoreApp.userDao?.insertAllUserLogs(userLog.logs)
+                    userLog.logs.forEach {
+                        it.userName = tinyDB.getString("selectedUserName")!!
+                        CoreApp.userDao?.insertUserLogs(it)
+                    }
+
                 }
                 callbackTo.onSuccess(response)
             }

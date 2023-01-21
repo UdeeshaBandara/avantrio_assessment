@@ -11,16 +11,25 @@ import com.avantrio.assessment.model.User
 interface UserDao {
 
     @Insert
-    fun insertAll(users: List<User>?): LongArray?
+    fun insert(users: User)
 
-    @Query("UPDATE UserItem SET isFav = :isFav WHERE id = :userId")
-    fun changeFavStatus(userId: Int, isFav: Boolean): Int
+    @Query("SELECT * FROM UserItem")
+    fun selectAllExistingUsers(): List<User>
+
+    @Query("SELECT * FROM UserLog WHERE userName = :userName")
+    fun selectUserLogById(userName: String): List<Log>
+
+    @Query("UPDATE UserItem SET isFav = :isFav WHERE name = :name")
+    fun changeFavStatus(name: String, isFav: Boolean): Int
 
     @Insert
-    fun insertAllUserLogs(users: List<Log>?): LongArray?
+    fun insertUserLogs(userLog: Log)
 
-    @Query("UPDATE UserLog SET distance = :distance, isCalculated = 1 WHERE id = :id AND userId = :userId")
-    fun updateDistanceById(id: Int, userId: Int, distance: Double): Int
+    @Query("SELECT COUNT(*) FROM UserLog")
+    fun checkUserLogCount(): Int
+
+    @Query("UPDATE UserLog SET distance = :distance, isCalculated = 1 WHERE id = :id AND userName = :userName")
+    fun updateDistanceById(id: Int, userName: String, distance: Double): Int
 
     @Query("UPDATE UserLog SET distance = 0, isCalculated = 0")
     fun resetCalculatedDistance(): Int

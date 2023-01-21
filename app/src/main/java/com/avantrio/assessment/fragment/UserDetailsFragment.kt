@@ -12,6 +12,7 @@ import com.avantrio.assessment.activity.LoginActivity
 import com.avantrio.assessment.activity.MainActivity
 import com.avantrio.assessment.adapter.UserAdapter
 import com.avantrio.assessment.adapter.UserLogAdapter
+import com.avantrio.assessment.model.Log
 import com.avantrio.assessment.model.User
 import com.avantrio.assessment.model.UserLog
 import com.avantrio.assessment.repositories.UserRepository
@@ -49,7 +50,11 @@ class UserDetailsFragment : Fragment() {
         getUserLog()
 
 
-        back.setOnClickListener { requireActivity().onBackPressed() }
+        back.setOnClickListener {
+            (activity as MainActivity).changeFragment(
+                UserFragment().javaClass.name
+            )
+        }
 
     }
 
@@ -66,6 +71,8 @@ class UserDetailsFragment : Fragment() {
         repository.getUserLog(object : UserRepository.NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
                 val userLog = response.body() as UserLog
+                userLog.logs.toMutableList()
+                    .add(Log(false, "", 0, 0.0, 0.0, "0.0", "", false, 0.0, false))
                 recycler_user_log.adapter = UserLogAdapter(userLog.logs, requireActivity())
                 recycler_user_log.layoutManager = LinearLayoutManager(
                     activity?.applicationContext,

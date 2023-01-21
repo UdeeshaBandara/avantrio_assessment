@@ -7,23 +7,26 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.avantrio.assessment.activity.MainActivity
 import com.avantrio.assessment.R
+import com.avantrio.assessment.fragment.UserDetailsFragment
 import com.avantrio.assessment.model.User
 import com.avantrio.assessment.service.CoreApp
+import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class UserAdapter(
     private var users: List<User>,
-    activity: Activity,
+    val activity: Activity,
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
 
-    var activity = activity
-    var isDescending = false
+    private var isDescending = false
+    private var usersOriginal = users
 
     fun sortListByAscendingOrDescending() {
 
@@ -34,6 +37,19 @@ class UserAdapter(
         isDescending = !isDescending
         notifyDataSetChanged()
 
+    }
+
+    fun filterFavUsers() {
+
+        users = users.filter { it.isFav }
+        notifyDataSetChanged()
+
+    }
+
+    fun resetFavUsers() {
+
+        users = usersOriginal
+        notifyDataSetChanged()
     }
 
     override fun getItemCount() = users.size
@@ -55,26 +71,39 @@ class UserAdapter(
 
         holder.name.text = users[position].name
 
+        if (users[position].isFav) holder.imgFav.setImageDrawable(
+            ContextCompat.getDrawable(
+                activity,
+                R.drawable.heart_fill_icon
+            )
+        )
+        else
+            holder.imgFav.setImageDrawable(
+                ContextCompat.getDrawable(
+                    activity,
+                    R.drawable.heart_icon
+                )
+            )
+
         holder.imgFav.setOnClickListener {
             CoroutineScope(Dispatchers.IO).async {
-                CoreApp.userDao?.changeFavStatus(users[position].id, !users[position].isFav)
+                CoreApp.userDao?.changeFavStatus(users[position].name, !users[position].isFav)
 
+                CoroutineScope(Dispatchers.Main).async{
+                    users[position].isFav = !users[position].isFav
+                    notifyItemChanged(position)
+                }
             }
+
         }
         holder.rootView.setOnClickListener {
-
-            (activity as MainActivity).showUserLogFragment(
-                users[position].id.toString(),
-                users[position].name
+            CoreApp.tinyDB.putString("selectedUserId",  users[position].id.toString())
+            CoreApp.tinyDB.putString("selectedUserName",  users[position].name)
+            (activity as MainActivity).changeFragment(
+                UserDetailsFragment().javaClass.name
             )
         }
 
-//        holder.itemUserBinding.buttonBook.setOnClickListener {
-//            listener.onRecyclerViewItemClick(holder.itemUserBinding.buttonBook, movies[position])
-//        }
-//        holder.itemUserBinding.layoutLike.setOnClickListener {
-//            listener.onRecyclerViewItemClick(holder.itemUserBinding.layoutLike, movies[position])
-//        }
     }
 
     inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -89,9 +118,4 @@ class UserAdapter(
     }
 
 
-}
-
-interface RecyclerViewClickListener {
-    fun onRecyclerViewItemClick(view: View, user: User)
-    fun onFavClick(user: User)
 }

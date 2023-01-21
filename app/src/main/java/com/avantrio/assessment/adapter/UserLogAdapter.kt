@@ -124,11 +124,11 @@ class UserLogAdapter(
                     )
 
                     if (displacement.isNotEmpty())
-                        tinyDB.getString("selectedUserId")?.let { selectedUserId ->
+                        tinyDB.getString("selectedUserName")?.let { selectedUserName ->
                             CoroutineScope(Dispatchers.IO).async {
                                 CoreApp.userDao?.updateDistanceById(
                                     users[position].id,
-                                    selectedUserId.toInt(),
+                                    selectedUserName,
                                     displacement[0].toDouble()
                                 )
                             }

@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.Debug.getLocation
 import androidx.core.content.ContextCompat.getDrawable
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.avantrio.assessment.R
 import com.avantrio.assessment.activity.MainActivity
@@ -21,6 +22,7 @@ import com.avantrio.assessment.service.PermissionHandler
 import com.avantrio.assessment.service.TinyDB
 import kotlinx.android.synthetic.main.fragment_settings.*
 import kotlinx.android.synthetic.main.fragment_user.*
+import kotlinx.coroutines.*
 import retrofit2.Response
 
 class UserFragment : Fragment() {
@@ -73,6 +75,7 @@ class UserFragment : Fragment() {
                         R.drawable.heart_fill_icon
                     )
                 )
+                userAdapter.filterFavUsers()
             } else {
                 img_fav_filter.tag = "notFav"
                 img_fav_filter.setImageDrawable(
@@ -81,6 +84,7 @@ class UserFragment : Fragment() {
                         R.drawable.heart_icon
                     )
                 )
+                userAdapter.resetFavUsers()
             }
 
 
@@ -96,18 +100,35 @@ class UserFragment : Fragment() {
 
         repository.getUsers(object : UserRepository.NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
-                val loginResponse = response.body() as List<User>
-                userAdapter = UserAdapter(loginResponse, requireActivity())
-                user_recycler.adapter = userAdapter
-                user_recycler.layoutManager = LinearLayoutManager(
-                    activity?.applicationContext,
-                    LinearLayoutManager.VERTICAL,
-                    false
-                )
+
+                //Cross check with local db after getting data from API
+                CoroutineScope(Dispatchers.IO).async {
+                    val loginResponse = response.body() as List<User>
+                    val existingUserList: List<User> = CoreApp.userDao?.selectAllExistingUsers()!!
+                    loginResponse.forEach { value ->
+                        if (!existingUserList.any { it.name == value.name }) {
+                            CoreApp.userDao?.insert(value)
+                            existingUserList.toMutableList().add(value)
+                        }
+                    }
+                    withContext(Dispatchers.IO) {}
+                    lifecycleScope.launch {}
+                    runBlocking {  }
+                    CoroutineScope(Dispatchers.Main).async {
+                        UserAdapter(existingUserList, requireActivity())
+                        user_recycler.adapter = userAdapter
+                        user_recycler.layoutManager = LinearLayoutManager(
+                            activity?.applicationContext,
+                            LinearLayoutManager.VERTICAL,
+                            false
+                        )
+                    }
+                }
 
             }
 
             override fun onError() {
+                //Redirect to login activity on session timeout
                 if (!isHidden && isAdded)
                     (activity as MainActivity).redirectToLogin()
 
