@@ -10,8 +10,9 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="30dp"
+        android:layout_marginEnd="20dp"
         android:gravity="center_vertical"
         android:orientation="horizontal">
 
@@ -34,19 +35,21 @@
 
         <ImageView
             android:id="@+id/img_location"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="40dp"
+            android:padding="10dp"
             android:src="@drawable/location_icon" />
 
         <ImageView
             android:id="@+id/img_sort"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
+            android:padding="10dp"
             android:src="@drawable/sort_icon" />
 
     </RelativeLayout>
@@ -91,12 +94,12 @@
             android:id="@+id/img_fav_filter"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:padding="8dp"
-            android:tag="notFav"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:layout_marginEnd="20dp"
-            android:src="@drawable/heart_icon" />
+            android:padding="8dp"
+            android:src="@drawable/heart_icon"
+            android:tag="notFav" />
 
     </RelativeLayout>
 

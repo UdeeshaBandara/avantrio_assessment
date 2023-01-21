@@ -29,6 +29,7 @@ class UserFragment : Fragment() {
     private lateinit var repository: UserRepository
 
     private lateinit var tinyDB: TinyDB
+    private lateinit var userAdapter: UserAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,10 +50,10 @@ class UserFragment : Fragment() {
                 PermissionHandler.LocationPermissionCallback {
                 override fun onSuccess(location: Location, addressText: String) {
 
-                        tinyDB.putString(
-                            "userAddress",
-                            addressText
-                        )
+                    tinyDB.putString(
+                        "userAddress",
+                        addressText
+                    )
 
 
                     tinyDB.putBoolean("isLocationSaved", true)
@@ -84,6 +85,10 @@ class UserFragment : Fragment() {
 
 
         }
+        img_sort.setOnClickListener {
+            userAdapter.sortListByAscendingOrDescending()
+
+        }
     }
 
 
@@ -92,7 +97,8 @@ class UserFragment : Fragment() {
         repository.getUsers(object : UserRepository.NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
                 val loginResponse = response.body() as List<User>
-                user_recycler.adapter = UserAdapter(loginResponse, requireActivity())
+                userAdapter = UserAdapter(loginResponse, requireActivity())
+                user_recycler.adapter = userAdapter
                 user_recycler.layoutManager = LinearLayoutManager(
                     activity?.applicationContext,
                     LinearLayoutManager.VERTICAL,

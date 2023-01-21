@@ -17,12 +17,24 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class UserAdapter(
-    private val users: List<User>,
+    private var users: List<User>,
     activity: Activity,
 ) : RecyclerView.Adapter<UserAdapter.UserViewHolder>() {
 
 
     var activity = activity
+    var isDescending = false
+
+    fun sortListByAscendingOrDescending() {
+
+        users = if (isDescending)
+            users.sortedBy { it.name }
+        else
+            users.sortedByDescending { it.name }
+        isDescending = !isDescending
+        notifyDataSetChanged()
+
+    }
 
     override fun getItemCount() = users.size
 
@@ -51,7 +63,10 @@ class UserAdapter(
         }
         holder.rootView.setOnClickListener {
 
-            (activity as MainActivity).showUserLogFragment(users[position].id.toString(),users[position].name)
+            (activity as MainActivity).showUserLogFragment(
+                users[position].id.toString(),
+                users[position].name
+            )
         }
 
 //        holder.itemUserBinding.buttonBook.setOnClickListener {
