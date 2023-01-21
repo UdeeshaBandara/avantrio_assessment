@@ -38,11 +38,9 @@ class SettingsFragment : Fragment() {
         btn_update_location.setOnClickListener {
             PermissionHandler(requireActivity()).getLocation(object :
                 PermissionHandler.LocationPermissionCallback {
-                override fun onSuccess(location: Location, addressList: List<Address>) {
-                    if (addressList.isNotEmpty()) {
-                        tinyDB.putString("userAddress", "${addressList[0].getAddressLine(0)} ")
+                override fun onSuccess(location: Location, addressText: String) {
 
-                    }
+                    tinyDB.putString("userAddress", addressText)
                     tinyDB.putBoolean("isLocationSaved", true)
                     tinyDB.putDouble("userLatitude", location.latitude)
                     tinyDB.putDouble("userLongitude", location.longitude)

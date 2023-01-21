@@ -19,6 +19,7 @@ data class Log(
     @ColumnInfo(name = "longitude") val longitude: Double,
     @ColumnInfo(name = "time") val time: String,
     @ColumnInfo(name = "userId") @Transient val userId: String,
-    @ColumnInfo(name = "isCalculated") @Transient val isCalculated: Boolean,
-    @ColumnInfo(name = "distance") @Transient val distance: Double
+    @ColumnInfo(name = "isCalculated") @Transient var isCalculated: Boolean,
+    @ColumnInfo(name = "distance") @Transient var distance: Double,
+    var isLocationViewed: Boolean,
 )

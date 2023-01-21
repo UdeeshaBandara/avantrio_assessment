@@ -19,7 +19,10 @@ interface UserDao {
     @Insert
     fun insertAllUserLogs(users: List<Log>?): LongArray?
 
-    @Query("UPDATE UserLog SET distance = :distance WHERE id = :id AND userId = :userId")
+    @Query("UPDATE UserLog SET distance = :distance, isCalculated = 1 WHERE id = :id AND userId = :userId")
     fun updateDistanceById(id: Int, userId: Int, distance: Double): Int
+
+    @Query("UPDATE UserLog SET distance = 0, isCalculated = 0")
+    fun resetCalculatedDistance(): Int
 
 }

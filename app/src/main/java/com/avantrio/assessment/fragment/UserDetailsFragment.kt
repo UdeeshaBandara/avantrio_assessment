@@ -43,7 +43,7 @@ class UserDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        repository = UserRepository(requireContext())
+        repository = UserRepository()
 
 
         getUserLog()
@@ -76,7 +76,7 @@ class UserDetailsFragment : Fragment() {
             }
 
             override fun onError() {
-                if (!isHidden)
+                if (!isHidden && isAdded)
                     (activity as MainActivity).redirectToLogin()
             }
 

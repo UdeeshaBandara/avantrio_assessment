@@ -32,7 +32,7 @@ class LoginActivity : AppCompatActivity() {
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
 
-        binding.loginHandler = LoginHandler(this, UserRepository(this))
+        binding.loginHandler = LoginHandler(this, UserRepository())
 
 
     }

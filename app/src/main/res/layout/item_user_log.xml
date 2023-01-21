@@ -44,30 +44,30 @@
 
     <ImageView
         android:id="@+id/img_location"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         android:layout_gravity="center"
-        android:layout_marginStart="50dp"
-
+        android:layout_marginStart="40dp"
         android:gravity="center"
+
+        android:paddingVertical="10dp"
         android:src="@drawable/map_icon"
         android:textColor="#5B5B5B"
-        android:textSize="14sp"
-        />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/txt_location"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginStart="50dp"
-
+        android:layout_marginStart="40dp"
+        android:ellipsize="end"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="Location"
-        android:visibility="gone"
+
         android:textColor="#5B5B5B"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:visibility="gone" />
 
 
     <Button
@@ -77,10 +77,10 @@
         android:layout_marginStart="70dp"
         android:layout_marginEnd="30dp"
         android:background="@drawable/login_button_background"
-        android:text="Calculate"
-        android:textSize="14sp"
         android:fontFamily="@font/poppins_semi_bold"
-        android:textAllCaps="true" />
+        android:text="Calculate"
+        android:textAllCaps="true"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/txt_calculated_distance"
@@ -91,7 +91,6 @@
         android:layout_marginEnd="30dp"
         android:fontFamily="@font/poppins_medium"
         android:gravity="center"
-        android:text="10km"
         android:textColor="#5B5B5B"
         android:textSize="14sp"
         android:visibility="gone" />

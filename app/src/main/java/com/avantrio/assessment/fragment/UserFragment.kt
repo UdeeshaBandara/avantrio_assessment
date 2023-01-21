@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.constraintlayout.motion.widget.Debug.getLocation
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.avantrio.assessment.R
 import com.avantrio.assessment.activity.MainActivity
@@ -40,20 +41,20 @@ class UserFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         tinyDB = TinyDB(requireActivity())
-        repository = UserRepository(requireContext())
+        repository = UserRepository()
         getUsers()
 
         img_location.setOnClickListener {
             PermissionHandler(requireActivity()).getLocation(object :
                 PermissionHandler.LocationPermissionCallback {
-                override fun onSuccess(location: Location, addressList: List<Address>) {
-                    if (addressList.isNotEmpty()) {
+                override fun onSuccess(location: Location, addressText: String) {
+
                         tinyDB.putString(
                             "userAddress",
-                            "${addressList[0].getAddressLine(0)} "
+                            addressText
                         )
 
-                    }
+
                     tinyDB.putBoolean("isLocationSaved", true)
                     tinyDB.putDouble("userLatitude", location.latitude)
                     tinyDB.putDouble("userLongitude", location.longitude)
@@ -61,6 +62,27 @@ class UserFragment : Fragment() {
                 }
 
             })
+        }
+        img_fav_filter.setOnClickListener {
+            if (img_fav_filter.tag.equals("notFav")) {
+                img_fav_filter.tag = "fav"
+                img_fav_filter.setImageDrawable(
+                    getDrawable(
+                        requireActivity(),
+                        R.drawable.heart_fill_icon
+                    )
+                )
+            } else {
+                img_fav_filter.tag = "notFav"
+                img_fav_filter.setImageDrawable(
+                    getDrawable(
+                        requireActivity(),
+                        R.drawable.heart_icon
+                    )
+                )
+            }
+
+
         }
     }
 
@@ -80,7 +102,7 @@ class UserFragment : Fragment() {
             }
 
             override fun onError() {
-                if (!isHidden)
+                if (!isHidden && isAdded)
                     (activity as MainActivity).redirectToLogin()
 
             }

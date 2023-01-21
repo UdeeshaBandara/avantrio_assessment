@@ -1,6 +1,8 @@
 package com.avantrio.assessment.adapter
 
 import android.app.Activity
+import android.location.Address
+import android.location.Geocoder
 import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.avantrio.assessment.R
 import com.avantrio.assessment.model.Log
@@ -17,12 +20,12 @@ import com.avantrio.assessment.service.TinyDB
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import java.util.*
 
 class UserLogAdapter(
     private val users: List<Log>,
-    activity: Activity,
+    val activity: Activity,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-
 
 
     override fun getItemCount() = users.size
@@ -71,11 +74,37 @@ class UserLogAdapter(
             if (users[position].isCalculated) {
                 holder.txtCalculatedDistance.visibility = View.VISIBLE
                 holder.btnCalculate.visibility = View.GONE
+                holder.txtCalculatedDistance.text = users[position].distance.toString() + " Km"
             } else {
                 holder.txtCalculatedDistance.visibility = View.GONE
                 holder.btnCalculate.visibility = View.VISIBLE
             }
 
+            if (users[position].isLocationViewed) {
+                holder.imgLocation.visibility = View.GONE
+                holder.txtLocation.visibility = View.VISIBLE
+
+                holder.txtLocation.text =
+                    retrieveAddressUsingLatLong(users[position].latitude, users[position].longitude)
+
+                holder.txtLocation.text = retrieveAddressUsingLatLong(
+                    users[position].latitude,
+                    users[position].longitude
+                )
+            } else {
+                holder.imgLocation.visibility = View.VISIBLE
+                holder.txtLocation.visibility = View.GONE
+
+
+            }
+
+            holder.imgLocation.setOnClickListener {
+
+                users[position].isLocationViewed = !users[position].isLocationViewed
+
+                notifyItemChanged(position)
+
+            }
 
 
             holder.btnCalculate.setOnClickListener {
@@ -103,7 +132,9 @@ class UserLogAdapter(
                                     displacement[0].toDouble()
                                 )
                             }
-
+                            users[position].distance = displacement[0].toDouble() / 1000
+                            users[position].isCalculated = true
+                            notifyItemChanged(position)
                         }
 
                 }
@@ -134,6 +165,19 @@ class UserLogAdapter(
 
     inner class UserLogHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
+    }
+
+    private fun retrieveAddressUsingLatLong(latitude: Double, longitude: Double): String {
+        val geocoder = Geocoder(activity)
+        val list: List<Address> =
+            geocoder.getFromLocation(latitude, longitude, 1)
+        if (list.isNotEmpty()) {
+            return if (list[0].maxAddressLineIndex != 0) list[0].getAddressLine(0) else "" +
+                    if (list[0].locality != null) list[0].locality else "" +
+                            if (list[0].adminArea != null) list[0].adminArea else "" +
+                                    if (list[0].countryName != null) list[0].countryName else ""
+        }
+        return ""
     }
 
 

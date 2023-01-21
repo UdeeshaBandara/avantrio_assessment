@@ -13,6 +13,7 @@ import android.location.LocationManager
 import android.provider.Settings
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import com.avantrio.assessment.repositories.UserRepository
 import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -85,8 +86,16 @@ class PermissionHandler(val activity: Activity) :
                         val geocoder = Geocoder(activity, Locale.getDefault())
                         val list: List<Address> =
                             geocoder.getFromLocation(location.latitude, location.longitude, 1)
+                      var addressText = ""
+                        if (list.isNotEmpty()) {
+                            addressText =   if (list[0].maxAddressLineIndex != 0) list[0].getAddressLine(0) else "" +
+                                    if (list[0].locality != null) list[0].locality else "" +
+                                            if (list[0].adminArea != null) list[0].adminArea else "" +
+                                                    if (list[0].countryName != null) list[0].countryName else ""
+                        }
+                        UserRepository().resetCalculatedDistance()
 
-                        callback.onSuccess(location, list)
+                        callback.onSuccess(location, addressText)
 
 
                     }
@@ -105,7 +114,7 @@ class PermissionHandler(val activity: Activity) :
     }
 
     interface LocationPermissionCallback {
-        fun onSuccess(location: Location, addressList: List<Address>)
+        fun onSuccess(location: Location, addressText: String)
 
     }
 

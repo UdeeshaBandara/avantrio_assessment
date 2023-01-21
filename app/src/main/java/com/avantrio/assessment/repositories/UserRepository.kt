@@ -19,8 +19,6 @@ import retrofit2.Response
 @Suppress("UNCHECKED_CAST")
 class UserRepository(
 
-    ctx: Context
-
 ) {
 
 
@@ -106,6 +104,12 @@ class UserRepository(
 
         })
 
+    }
+
+    fun resetCalculatedDistance() {
+        CoroutineScope(Dispatchers.IO).async {
+            CoreApp.userDao?.resetCalculatedDistance()
+        }
     }
 
     private fun fetchData(apiInterface: Call<Any>, callback: NetworkCallback) {
