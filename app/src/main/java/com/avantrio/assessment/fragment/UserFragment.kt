@@ -4,6 +4,7 @@ package com.avantrio.assessment.fragment
 import android.location.Address
 import android.location.Location
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -102,7 +103,7 @@ class UserFragment : Fragment() {
             override fun onSuccess(response: Response<Any>) {
 
                 //Cross check with local db after getting data from API
-                CoroutineScope(Dispatchers.IO).async {
+                lifecycleScope.launch(Dispatchers.IO) {
                     val loginResponse = response.body() as List<User>
                     val existingUserList: List<User> = CoreApp.userDao?.selectAllExistingUsers()!!
                     loginResponse.forEach { value ->
@@ -111,11 +112,10 @@ class UserFragment : Fragment() {
                             existingUserList.toMutableList().add(value)
                         }
                     }
-                    withContext(Dispatchers.IO) {}
-                    lifecycleScope.launch {}
-                    runBlocking {  }
-                    CoroutineScope(Dispatchers.Main).async {
-                        UserAdapter(existingUserList, requireActivity())
+
+                    activity?.runOnUiThread {
+
+                        userAdapter = UserAdapter(existingUserList, requireActivity())
                         user_recycler.adapter = userAdapter
                         user_recycler.layoutManager = LinearLayoutManager(
                             activity?.applicationContext,
@@ -123,6 +123,7 @@ class UserFragment : Fragment() {
                             false
                         )
                     }
+
                 }
 
             }

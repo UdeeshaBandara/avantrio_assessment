@@ -24,11 +24,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
 
-        //Check whether previously logged in or not
-        if (CoreApp.tinyDB.getBoolean("isLoggedIn")) {
-            startActivity(Intent(this, MainActivity::class.java))
-            finishAffinity()
-        }
 
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_login)

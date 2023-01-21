@@ -1,8 +1,11 @@
 package com.avantrio.assessment.activity
 
 import android.content.Intent
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.DisplayMetrics
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import com.avantrio.assessment.R
@@ -50,6 +53,8 @@ class MainActivity : AppCompatActivity() {
         lnr_users.setOnClickListener {
             changeFragment(userFragment.javaClass.name)
         }
+
+        hideOverlay()
     }
 
 
@@ -68,5 +73,32 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(this, "Session timeout. Please log again", Toast.LENGTH_LONG).show()
         startActivity(Intent(this, LoginActivity::class.java))
         finishAffinity()
+    }
+
+    //Hide bottom navigation when appearing physical keyboard
+    private fun hideOverlay() {
+        rlt_root.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            rlt_root.getWindowVisibleDisplayFrame(r)
+            val displayMetrics = DisplayMetrics()
+            windowManager.defaultDisplay.getMetrics(displayMetrics)
+            val heightDiff = displayMetrics.heightPixels - (r.bottom - r.top)
+            if (heightDiff > 100) {
+
+
+                bottom_navigation.visibility =
+                    View.INVISIBLE
+
+
+            } else {
+
+
+                bottom_navigation.visibility =
+                    View.VISIBLE
+
+
+            }
+
+        }
     }
 }

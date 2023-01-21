@@ -23,10 +23,22 @@ import kotlinx.coroutines.async
 import java.util.*
 
 class UserLogAdapter(
-    private val users: List<Log>,
+    private var users: List<Log>,
     val activity: Activity,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
+    private var isDescending = false
+
+    fun sortListByAscendingOrDescending() {
+
+        users = if (isDescending)
+            users.sortedBy { it.date }
+        else
+            users.sortedByDescending { it.date }
+        isDescending = !isDescending
+        notifyDataSetChanged()
+
+    }
 
     override fun getItemCount() = users.size
 
