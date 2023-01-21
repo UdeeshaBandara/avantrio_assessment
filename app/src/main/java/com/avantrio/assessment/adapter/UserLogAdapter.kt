@@ -1,6 +1,7 @@
 package com.avantrio.assessment.adapter
 
 import android.app.Activity
+import android.location.Location
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,14 +11,19 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.avantrio.assessment.R
 import com.avantrio.assessment.model.Log
+import com.avantrio.assessment.service.CoreApp
+import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
 import com.avantrio.assessment.service.TinyDB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 
 class UserLogAdapter(
     private val users: List<Log>,
     activity: Activity,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    private var tinyDB: TinyDB = TinyDB(activity)
+
 
     override fun getItemCount() = users.size
 
@@ -73,6 +79,34 @@ class UserLogAdapter(
 
 
             holder.btnCalculate.setOnClickListener {
+                val userLatitude = tinyDB.getDouble("userLatitude", 0.0)
+                val userLongitude = tinyDB.getDouble("userLongitude", 0.0)
+                if (userLatitude == 0.0 || userLongitude == 0.0)
+                    tinyDB.putBoolean("isLocationSaved", false)
+                else {
+
+                    val displacement = FloatArray(1)
+                    Location.distanceBetween(
+                        users[position].latitude,
+                        users[position].longitude,
+                        userLatitude,
+                        userLongitude,
+                        displacement
+                    )
+
+                    if (displacement.isNotEmpty())
+                        tinyDB.getString("selectedUserId")?.let { selectedUserId ->
+                            CoroutineScope(Dispatchers.IO).async {
+                                CoreApp.userDao?.updateDistanceById(
+                                    users[position].id,
+                                    selectedUserId.toInt(),
+                                    displacement[0].toDouble()
+                                )
+                            }
+
+                        }
+
+                }
 
             }
         }

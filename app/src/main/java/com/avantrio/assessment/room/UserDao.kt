@@ -14,10 +14,12 @@ interface UserDao {
     fun insertAll(users: List<User>?): LongArray?
 
     @Query("UPDATE UserItem SET isFav = :isFav WHERE id = :userId")
-    fun changeFavStatus(userId: Int, isFav : Boolean): Int
+    fun changeFavStatus(userId: Int, isFav: Boolean): Int
 
     @Insert
     fun insertAllUserLogs(users: List<Log>?): LongArray?
 
+    @Query("UPDATE UserLog SET distance = :distance WHERE id = :id AND userId = :userId")
+    fun updateDistanceById(id: Int, userId: Int, distance: Double): Int
 
 }

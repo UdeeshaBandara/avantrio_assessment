@@ -55,13 +55,14 @@ class LoginActivity : AppCompatActivity() {
                             if (response.code() == 200) {
                                 startActivity(Intent(ctx, MainActivity::class.java))
                                 finishAffinity()
+                            }else{
+                                Toast.makeText(ctx, "Invalid credentials", Toast.LENGTH_LONG).show()
                             }
 
                         }
 
                         override fun onError() {
-                            startActivity(Intent(ctx, LoginActivity::class.java))
-                            finishAffinity()
+
                         }
 
                     })

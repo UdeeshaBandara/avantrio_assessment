@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.avantrio.assessment.R
 import com.avantrio.assessment.activity.LoginActivity
+import com.avantrio.assessment.activity.MainActivity
 import com.avantrio.assessment.adapter.UserAdapter
 import com.avantrio.assessment.adapter.UserLogAdapter
 import com.avantrio.assessment.model.User
@@ -75,8 +76,8 @@ class UserDetailsFragment : Fragment() {
             }
 
             override fun onError() {
-                startActivity(Intent(requireActivity(), LoginActivity::class.java))
-                requireActivity().finishAffinity()
+                if (!isHidden)
+                    (activity as MainActivity).redirectToLogin()
             }
 
         })

@@ -51,7 +51,7 @@ class UserAdapter(
         }
         holder.rootView.setOnClickListener {
 
-            (activity as MainActivity).changeFragment(users[position].id.toString(),users[position].name)
+            (activity as MainActivity).showUserLogFragment(users[position].id.toString(),users[position].name)
         }
 
 //        holder.itemUserBinding.buttonBook.setOnClickListener {

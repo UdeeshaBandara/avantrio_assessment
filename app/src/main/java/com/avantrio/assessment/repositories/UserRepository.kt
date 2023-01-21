@@ -7,6 +7,7 @@ import com.avantrio.assessment.model.User
 import com.avantrio.assessment.model.UserLog
 import com.avantrio.assessment.service.ApiInterface
 import com.avantrio.assessment.service.CoreApp
+import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
 import com.avantrio.assessment.service.TinyDB
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +22,7 @@ class UserRepository(
     ctx: Context
 
 ) {
-    private var tinyDB: TinyDB = TinyDB(ctx)
+
 
     private lateinit var accessToken: String
 
@@ -66,9 +67,14 @@ class UserRepository(
         ) as Call<Any>, callback = object : NetworkCallback {
             override fun onSuccess(response: Response<Any>) {
 
-                val loginResponse = response.body() as Login
-                tinyDB.putString("accessToken", "Bearer " + loginResponse.token)
-                tinyDB.putBoolean("isLoggedIn", true)
+                if (response.code() == 200) {
+                    val loginResponse = response.body() as Login
+                    tinyDB.putString("accessToken", "Bearer " + loginResponse.token)
+                    tinyDB.putBoolean("isLoggedIn", true)
+                    tinyDB.putString("userEmail", email)
+                }
+
+
                 callbackTo.onSuccess(response)
             }
 
@@ -111,10 +117,10 @@ class UserRepository(
                     call: Call<Any>,
                     response: Response<Any>
                 ) {
-                    if (response.code() != 200)
-                        callback.onError()
-                    else
+                    if (response.code() == 200 || response.code() == 400)
                         callback.onSuccess(response)
+                    else
+                        callback.onError()
 
                 }
 
