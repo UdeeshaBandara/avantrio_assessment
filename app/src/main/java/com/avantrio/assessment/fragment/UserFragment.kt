@@ -108,11 +108,16 @@ class UserFragment : Fragment() {
                 //Cross check with local db after getting data from API
                 lifecycleScope.launch(Dispatchers.IO) {
                     val userResponse = response.body() as List<User>
-                    val existingUserList: List<User> = CoreApp.userDao?.selectAllExistingUsers()!!
-                    userResponse.forEach { value ->
-                        if (!existingUserList.any { it.name == value.name }) {
-                            CoreApp.userDao?.insert(value)
-                            existingUserList.toMutableList().add(value)
+                    var existingUserList: List<User> = CoreApp.userDao?.selectAllExistingUsers()!!
+                    if (existingUserList.isEmpty()) {
+                        existingUserList = userResponse
+                        userResponse.forEach { CoreApp.userDao?.insert(it) }
+                    } else {
+                        userResponse.forEach { value ->
+                            if (!existingUserList.any { it.name == value.name }) {
+                                CoreApp.userDao?.insert(value)
+                                existingUserList.toMutableList().add(value)
+                            }
                         }
                     }
 

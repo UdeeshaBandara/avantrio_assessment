@@ -128,7 +128,7 @@ class UserRepository(
                 ) {
                     if (response.code() == 200 || response.code() == 400)
                         callback.onSuccess(response)
-                    else
+                    else  if (response.code() == 401)
                         callback.onError()
 
                 }
