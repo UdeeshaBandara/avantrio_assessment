@@ -1,31 +1,23 @@
 package com.avantrio.assessment.adapter
 
 import android.app.Activity
-import android.app.PendingIntent.getActivity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.avantrio.assessment.MainActivity
 import com.avantrio.assessment.R
 import com.avantrio.assessment.model.Log
-import com.avantrio.assessment.model.User
-import com.avantrio.assessment.service.CoreApp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
+import com.avantrio.assessment.service.TinyDB
 
 class UserLogAdapter(
     private val users: List<Log>,
     activity: Activity,
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-
-    var activity = activity
+    private var tinyDB: TinyDB = TinyDB(activity)
 
     override fun getItemCount() = users.size
 
@@ -99,11 +91,14 @@ class UserLogAdapter(
         var btnCalculate: Button = itemView.findViewById(R.id.btn_calculate)
         var txtCalculatedDistance: TextView = itemView.findViewById(R.id.txt_calculated_distance)
 
+        init {
+            if (!tinyDB.getBoolean("isLocationSaved")) btnCalculate.isEnabled = false
+        }
+
 
     }
 
     inner class UserLogHeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-
 
     }
 

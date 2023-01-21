@@ -1,14 +1,23 @@
 package com.avantrio.assessment.repositories
 
 import android.content.Context
+import android.util.Log
 import com.avantrio.assessment.model.Login
-import com.avantrio.assessment.room.UserDao
+import com.avantrio.assessment.model.User
+import com.avantrio.assessment.model.UserLog
 import com.avantrio.assessment.service.ApiInterface
 import com.avantrio.assessment.service.CoreApp
 import com.avantrio.assessment.service.TinyDB
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
+@Suppress("UNCHECKED_CAST")
 class UserRepository(
-    private val api: ApiInterface,
+
     ctx: Context
 
 ) {
@@ -17,36 +26,108 @@ class UserRepository(
     private lateinit var accessToken: String
 
     init {
-//        tinyDB.getString("access_token")?.let {
-//            accessToken = it
-//        }
-        accessToken =
-            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoyLCJ1c2VybmFtZSI6ImFjaGFsYSIsImV4cCI6MTY3NDE4MDE1MiwiZW1haWwiOiJhY2hhbGFAbWFpbGluYXRvci5jb20iLCJvcmlnX2lhdCI6MTY3NDE3NjU1Mn0.MXialLRSSQqnsO8Xw5n8kKMmxLH6YIT8Kp96YUg_kSg"
+        tinyDB.getString("accessToken")?.let {
+            accessToken = it
+        }
+
+
     }
 
-    suspend fun getUsers() = api.getUsers(accessToken)
-        .body()
+    fun getUsers(callbackTo: NetworkCallback) {
+
+        fetchData(ApiInterface.create().getUsers(
+            accessToken
+        ) as Call<Any>, callback = object : NetworkCallback {
+            override fun onSuccess(response: Response<Any>) {
+                val loginResponse = response.body() as List<User>
+                CoroutineScope(Dispatchers.IO).async {
+                    CoreApp.userDao?.insertAll(loginResponse)
+                }
+                callbackTo.onSuccess(response)
+            }
+
+            override fun onError() {
+                callbackTo.onError()
+            }
+
+        })
+
+    }
 
 
-    suspend fun userLogin(email: String, password: String): Login? {
+    fun userLogin(email: String, password: String, callbackTo: NetworkCallback) {
 
-        return api.login(
+
+        fetchData(ApiInterface.create().login(
             postDetails = mutableMapOf(
                 "username" to email,
                 "password" to password,
             ) as HashMap<String, String>
-        )
-            .body()
+        ) as Call<Any>, callback = object : NetworkCallback {
+            override fun onSuccess(response: Response<Any>) {
+
+                val loginResponse = response.body() as Login
+                tinyDB.putString("accessToken", "Bearer " + loginResponse.token)
+                tinyDB.putBoolean("isLoggedIn", true)
+                callbackTo.onSuccess(response)
+            }
+
+            override fun onError() {
+                callbackTo.onError()
+            }
+
+        })
 
 
     }
 
-    suspend fun getUserLog() =
-
-        api.getUserLog(
+    fun getUserLog(callbackTo: NetworkCallback) {
+        fetchData(ApiInterface.create().getUserLog(
             accessToken,
             tinyDB.getString("selectedUserId")!!
-        )
-            .body()
+        ) as Call<Any>, callback = object : NetworkCallback {
+            override fun onSuccess(response: Response<Any>) {
+                val userLog = response.body() as UserLog
+                CoroutineScope(Dispatchers.IO).async {
+                    CoreApp.userDao?.insertAllUserLogs(userLog.logs)
+                }
+                callbackTo.onSuccess(response)
+            }
 
+            override fun onError() {
+                callbackTo.onError()
+            }
+
+        })
+
+    }
+
+    private fun fetchData(apiInterface: Call<Any>, callback: NetworkCallback) {
+
+
+        apiInterface.enqueue(
+            object : Callback<Any> {
+                override fun onResponse(
+                    call: Call<Any>,
+                    response: Response<Any>
+                ) {
+                    if (response.code() != 200)
+                        callback.onError()
+                    else
+                        callback.onSuccess(response)
+
+                }
+
+                override fun onFailure(call: Call<Any>, t: Throwable) {
+
+                    Log.e("fail", t.message.toString())
+                    callback.onError()
+                }
+            })
+    }
+
+    interface NetworkCallback {
+        fun onSuccess(response: Response<Any>)
+        fun onError()
+    }
 }

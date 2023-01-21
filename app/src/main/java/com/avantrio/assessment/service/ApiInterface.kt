@@ -13,27 +13,27 @@ import retrofit2.http.*
 interface ApiInterface {
 
     @POST("user/login")
-    suspend fun login(
+    fun login(
         @Body postDetails: HashMap<String, String>
-    ): Response<Login>
+    ): Call<Login>
 
     @GET("users")
-    suspend fun getUsers(
+    fun getUsers(
         @Header("Authorization") token: String,
-    ): Response<List<User>>
+    ): Call<List<User>>
 
     @GET("user/{id}/logs")
-    suspend fun getUserLog(
+    fun getUserLog(
         @Header("Authorization") token: String,
         @Path("id") id: String
-    ):  Response<UserLog>
+    ): Call<UserLog>
 
 
     companion object {
 
         private val BASE_URL = "http://apps.avantrio.xyz:8010/api/"
 
-        operator fun invoke(): ApiInterface {
+        fun create(): ApiInterface {
 
             val retrofit = Retrofit.Builder()
                 .addConverterFactory(GsonConverterFactory.create())

@@ -1,9 +1,12 @@
-package com.avantrio.assessment
+package com.avantrio.assessment.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.FragmentManager
-import com.avantrio.assessment.model.User
+import com.avantrio.assessment.R
+import com.avantrio.assessment.fragment.SettingsFragment
+import com.avantrio.assessment.fragment.UserDetailsFragment
+import com.avantrio.assessment.fragment.UserFragment
 import com.avantrio.assessment.service.CoreApp.Companion.tinyDB
 
 class MainActivity : AppCompatActivity() {
